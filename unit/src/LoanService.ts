@@ -6,7 +6,7 @@ export class LoanService {
   private books: Map<string, Book> = new Map();
   private users: Map<string, User> = new Map();
 
-  constructor() { }
+  constructor() {}
 
   addBook(book: Book): void {
     this.books.set(book.id, book);
@@ -24,7 +24,11 @@ export class LoanService {
     return this.users.get(userId);
   }
 
-  borrowBook(bookId: string, userId: string, borrowDate: Date = new Date()): boolean {
+  borrowBook(
+    bookId: string,
+    userId: string,
+    borrowDate: Date = new Date()
+  ): boolean {
     const book = this.books.get(bookId);
     const user = this.users.get(userId);
 
@@ -37,7 +41,7 @@ export class LoanService {
     }
 
     // Prêt du livre
-    book.status = 'borrowed';
+    book.status = "borrowed";
     book.borrowedBy = userId;
     book.borrowDate = borrowDate;
     book.dueDate = this.calculateDueDate(borrowDate, user.category);
@@ -64,7 +68,7 @@ export class LoanService {
     const penalty = this.calculatePenalty(book, returnDate);
 
     // Retour du livre
-    book.status = 'available';
+    book.status = "available";
     user.removeLoan(bookId);
     book.borrowedBy = undefined;
     book.borrowDate = undefined;
@@ -78,9 +82,9 @@ export class LoanService {
 
     // Durée de prêt selon la catégorie d'utilisateur (en jours)
     const loanDurations: Record<UserCategory, number> = {
-      standard: 14,  // 2 semaines
-      premium: 30,   // 1 mois
-      employee: 60   // 2 mois
+      standard: 14, // 2 semaines
+      premium: 30, // 1 mois
+      employee: 60, // 2 mois
     };
 
     dueDate.setDate(dueDate.getDate() + loanDurations[userCategory]);
@@ -107,19 +111,21 @@ export class LoanService {
   }
 
   getBorrowedBooks(): Book[] {
-    return Array.from(this.books.values()).filter(book => book.isBorrowed());
+    return Array.from(this.books.values()).filter((book) => book.isBorrowed());
   }
 
   getAvailableBooks(): Book[] {
-    return Array.from(this.books.values()).filter(book => book.isAvailable());
+    return Array.from(this.books.values()).filter((book) => book.isAvailable());
   }
 
   getUserLoans(userId: string): Book[] {
-    return Array.from(this.books.values()).filter(book => book.borrowedBy === userId);
+    return Array.from(this.books.values()).filter(
+      (book) => book.borrowedBy === userId
+    );
   }
 
   getOverdueBooks(currentDate: Date = new Date()): Book[] {
-    return this.getBorrowedBooks().filter(book =>
+    return this.getBorrowedBooks().filter((book) =>
       book.dueDate ? book.dueDate < currentDate : false
     );
   }
